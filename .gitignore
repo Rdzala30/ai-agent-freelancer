@@ -1,4 +1,6 @@
+# ============================================================
 # Environment & Secrets (NEVER commit real credentials)
+# ============================================================
 .env
 .env.*
 !.env.example
@@ -9,25 +11,33 @@ google_creds.json
 client_secret*.json
 service_account*.json
 token.json
+.streamlit/secrets.toml
 
+# ============================================================
 # Local Runtime Data & Database
+# ============================================================
 data/
 *.db
 *.db-wal
 *.db-shm
 *.sqlite
 *.sqlite3
+*.sqlite3-journal
 
-# Python Virtual Environments & Cache
+# ============================================================
+# Python Virtual Environments & Bytecode
+# ============================================================
+__pycache__/
+*.py[codz]
+*$py.class
+*.so
+.Python
 .venv/
 venv/
 env/
 ENV/
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
+env.bak/
+venv.bak/
 build/
 develop-eggs/
 dist/
@@ -40,29 +50,56 @@ parts/
 sdist/
 var/
 wheels/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
-# Testing & Linting
-.pytest_cache/
-.coverage
+# ============================================================
+# Testing & Code Quality
+# ============================================================
 htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py.cover
+.hypothesis/
+.pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.dmypy.json
+dmypy.json
 
+# ============================================================
 # Logs
+# ============================================================
 *.log
 logs/
+pip-log.txt
+pip-delete-this-directory.txt
 
-# IDE & Editor Configs
+# ============================================================
+# IDEs & Editor Files
+# ============================================================
 .idea/
 .vscode/
 *.swp
 *.swo
 *~
+.spyderproject
+.spyproject
+.ropeproject
+tempCodeRunnerFile.py
 
+# ============================================================
 # Operating System Files
+# ============================================================
 .DS_Store
 .DS_Store?
 ._*
