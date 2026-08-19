@@ -1,0 +1,12 @@
+# LeadHunter AI — runtime dependencies (pip install -r requirements.txt)
+# Lightweight on purpose: core pipeline is stdlib-only (sqlite3, urllib not even needed — requests below).
+requests>=2.28        # HTTP for verification, discovery, LLM, sheets
+PyYAML>=6.0           # config.yaml
+google-auth>=2.23     # Google Sheets service-account auth (raw REST, no heavyweight SDK)
+gspread>=5.10.0       # Google Sheets API client
+serpapi>=1.0.0        # SerpAPI Google Maps search
+httpx>=0.24.0         # Modern HTTP client for website verification
+anthropic>=0.18.0     # Anthropic Claude SDK for AI personalization
+fastapi>=0.100.0      # Web framework for demo landing page server
+uvicorn>=0.22.0       # ASGI server
+jinja2>=3.1.0         # Template engine for demo pages

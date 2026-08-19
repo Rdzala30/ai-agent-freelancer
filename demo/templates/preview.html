@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ lead.name }} — Official Website Concept</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f97316;
+            --primary-hover: #ea580c;
+            --primary-glow: rgba(249, 115, 22, 0.2);
+            --bg-dark: #090d16;
+            --card-bg: rgba(18, 24, 38, 0.85);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-green: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(249, 115, 22, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 85% 75%, rgba(59, 130, 246, 0.08) 0%, transparent 45%);
+            background-attachment: fixed;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        /* Top Demo Banner */
+        .demo-bar {
+            background: linear-gradient(90deg, #ea580c, #f97316, #f59e0b);
+            color: #ffffff;
+            text-align: center;
+            padding: 10px 16px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 20px var(--primary-glow);
+        }
+
+        .demo-badge {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .container {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navbar */
+        header {
+            padding: 24px 0;
+            border-bottom: 1px solid var(--card-border);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(9, 13, 22, 0.75);
+        }
+
+        .nav-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand-logo span {
+            color: var(--primary);
+        }
+
+        .nav-cta {
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+
+        .nav-cta:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 70px 0 50px;
+            text-align: center;
+        }
+
+        .category-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(249, 115, 22, 0.12);
+            color: #fdba74;
+            border: 1px solid rgba(249, 115, 22, 0.25);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: capitalize;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.4rem, 5vw, 3.6rem);
+            line-height: 1.15;
+            margin-bottom: 18px;
+            color: #ffffff;
+        }
+
+        .hero-tagline {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            max-width: 680px;
+            margin: 0 auto 28px;
+        }
+
+        .rating-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 8px 18px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            color: #f1f5f9;
+        }
+
+        .stars {
+            color: #fbbf24;
+            letter-spacing: 2px;
+        }
+
+        /* Grid sections */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 40px 0;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 32px;
+            backdrop-filter: blur(16px);
+            transition: border-color 0.2s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(249, 115, 22, 0.35);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: rgba(249, 115, 22, 0.12);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .card h3 {
+            font-size: 1.3rem;
+            color: #ffffff;
+        }
+
+        .info-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            min-width: 80px;
+        }
+
+        .info-value {
+            color: #e2e8f0;
+            flex: 1;
+        }
+
+        .info-value a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .info-value a:hover {
+            text-decoration: underline;
+        }
+
+        /* Features / Highlights */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .feature-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .feature-box h4 {
+            color: #ffffff;
+            margin-bottom: 4px;
+            font-size: 1rem;
+        }
+
+        .feature-box p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* CTA Footer Card */
+        .cta-card {
+            margin: 50px 0 80px;
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(18, 24, 38, 0.95) 100%);
+            border: 1px solid rgba(249, 115, 22, 0.35);
+            border-radius: 20px;
+            padding: 48px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-card h2 {
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+
+        .cta-card p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            max-width: 580px;
+            margin: 0 auto 28px;
+        }
+
+        .cta-btn-large {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--primary);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 24px var(--primary-glow);
+        }
+
+        .cta-btn-large:hover {
+            background: var(--primary-hover);
+            transform: scale(1.02);
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid var(--card-border);
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Announcement Bar -->
+    <div class="demo-bar">
+        <span class="demo-badge">Live Preview</span>
+        We built this demo website for <strong>{{ lead.name }}</strong>
+    </div>
+
+    <!-- Navigation -->
+    <header>
+        <div class="container nav-wrapper">
+            <div class="brand-logo">
+                🍽️ {{ lead.name }}
+            </div>
+            <a href="#contact" class="nav-cta">Call Now</a>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="category-pill">
+                📍 {{ lead.city }} • {{ lead.category | capitalize }}
+            </div>
+            <h1>{{ lead.name }}</h1>
+            <p class="hero-tagline">
+                Experience authentic flavors, welcoming hospitality, and a premium dining experience right here in {{ lead.city }}.
+            </p>
+            {% if lead.rating %}
+            <div class="rating-badge">
+                <span class="stars">★★★★★</span>
+                <strong>{{ lead.rating }} / 5.0</strong>
+                <span style="color: #64748b;">•</span>
+                <span>{{ lead.reviews_count or 0 }} Google Reviews</span>
+            </div>
+            {% endif %}
+        </section>
+
+        <!-- 2-Column Info & Contact Grid -->
+        <div class="grid-2">
+            <!-- Business Highlights -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">✨</div>
+                    <h3>About {{ lead.name }}</h3>
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;">
+                    Proudly serving {{ lead.city }} with freshly prepared specialties and memorable hospitality. Perfect for family dinners, celebrations, and gatherings.
+                </p>
+                <div class="features-grid">
+                    <div class="feature-box">
+                        <h4>⭐ Top Rated</h4>
+                        <p>{{ lead.rating or 4.5 }}★ on Google</p>
+                    </div>
+                    <div class="feature-box">
+                        <h4>🛵 Quick Orders</h4>
+                        <p>Dine-in & Takeaway</p>
+                    </div>
+                    <div class="feature-box">
+                        <h4>🌿 Authentic Taste</h4>
+                        <p>Signature recipes</p>
+                    </div>
+                    <div class="feature-box">
+                        <h4>👨‍👩‍👧‍👦 Family Friendly</h4>
+                        <p>Comfortable ambiance</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact & Location -->
+            <div class="card" id="contact">
+                <div class="card-header">
+                    <div class="card-icon">📞</div>
+                    <h3>Contact & Location</h3>
+                </div>
+                <ul class="info-list">
+                    <li class="info-item">
+                        <span class="info-label">Phone</span>
+                        <span class="info-value">
+                            {% if lead.phone %}
+                            <a href="tel:{{ lead.phone }}">{{ lead.phone }}</a>
+                            {% else %}
+                            Available upon request
+                            {% endif %}
+                        </span>
+                    </li>
+                    <li class="info-item">
+                        <span class="info-label">Location</span>
+                        <span class="info-value">
+                            {{ lead.address or lead.city ~ ", Gujarat, India" }}
+                        </span>
+                    </li>
+                    <li class="info-item">
+                        <span class="info-label">City</span>
+                        <span class="info-value">{{ lead.city }}</span>
+                    </li>
+                    <li class="info-item">
+                        <span class="info-label">Status</span>
+                        <span class="info-value" style="color: var(--accent-green);">● Open for Business</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Conversion CTA Banner -->
+        <section class="cta-card">
+            <h2>Want a site like this? Contact us</h2>
+            <p>
+                This custom landing page was automatically generated for <strong>{{ lead.name }}</strong>. 
+                Claim your domain, customize menu items, and start getting direct orders online today.
+            </p>
+            <a href="https://wa.me/919999999999?text=Hi,%20I%20am%20interested%20in%20launching%20the%20website%20demo%20for%20{{ lead.name | urlencode }}" class="cta-btn-large">
+                🚀 Launch This Website For Your Business
+            </a>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>© 2026 {{ lead.name }} — Concept Demo Powered by LeadHunter AI</p>
+        </div>
+    </footer>
+</body>
+</html>

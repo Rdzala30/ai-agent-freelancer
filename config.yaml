@@ -1,0 +1,87 @@
+# ============================================================
+# LeadHunter AI — configuration (settings ONLY; secrets in .env)
+# Any setting can be overridden at runtime with the LEADHUNTER_
+# prefix, e.g. LEADHUNTER_LIMITS_MAX_LEADS_PER_RUN=5
+# ============================================================
+
+app:
+  name: LeadHunter AI
+  version: 0.1.0
+  data_dir: ./data
+  default_city: Pune
+  default_category: cafe
+
+limits:
+  max_leads_per_run: 25      # cap on newly discovered leads per run
+  batch_size: 10             # leads processed per stage per loop iteration
+  min_lead_score: 60         # leads below this are DISCARDED before personalization
+
+retry:
+  max_attempts: 3            # per-operation attempts before FAILED
+  base_delay_s: 2.0
+  max_delay_s: 60.0
+  jitter: true
+
+http:
+  timeout_s: 15
+  user_agent: "LeadHunterAI/0.1 (lead research; https://github.com/leadhunter-ai)"
+  max_redirects: 5
+  max_response_bytes: 300000
+
+rate_limits:
+  overpass_min_interval_s: 1.5   # be polite to the public OSM Overpass API
+  nominatim_min_interval_s: 1.2  # Nominatim usage policy: max 1 req/s
+  google_places_qps: 10
+
+discovery:
+  provider: overpass         # overpass (free, no key) | google_places (needs key)
+  search_radius_m: 5000
+  max_results: 50            # provider-side cap before local max_leads_per_run
+  refresh: false             # true = re-run discovery even if done before
+
+qualification:
+  accept_classifications: [no_site, weak_site]   # UNVERIFIABLE stays out by default
+  require_address: true      # must have address or lat/lon
+  require_phone: false
+
+scoring:
+  weights:
+    no_website: 40
+    weak_website: 20         # has site but mobile-unfriendly / heavy / placeholder
+    has_phone: 10
+    has_email: 5
+    good_rating: 5           # rating >= 4.0
+    review_volume: 5         # reviews >= 10
+    category_match: 10       # category resolved to a known OSM tag set
+    contactable: 5           # phone OR email present for outreach
+
+personalization:
+  mode: template             # template (deterministic, works offline) | llm (needs OPENROUTER_API_KEY)
+  language: hinglish         # hinglish | english
+  max_words: 120
+
+demo:
+  publisher: local           # local (always works) | github_pages (needs env)
+  base_domain: ""            # e.g. https://demos.example.com — demo URLs use <base_domain>/<lead_id>/
+  output_dir: ./data/demos
+
+outreach:
+  approval_mode: manual      # manual (default, safest) | auto
+  dry_run: true              # NEVER sends anything when true (default)
+  max_per_day: 20
+  channels:
+    whatsapp: true
+    email: false
+  outbox_dir: ./data/outbox
+
+sheets:
+  enabled: true
+  fallback_csv: true         # always also mirror to CSV under data/export/
+
+reporting:
+  formats: [markdown, json]
+  output_dir: ./data/reports
+
+logging:
+  level: INFO
+  file: ./data/logs/leadhunter.log

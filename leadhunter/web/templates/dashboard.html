@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeadHunter AI — Web Control Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+    <!-- Top Global Header -->
+    <header class="top-nav">
+        <div class="nav-left">
+            <div class="app-brand">
+                <span class="brand-icon">⚡</span>
+                <span class="brand-title">LeadHunter<span>.AI</span></span>
+                <span class="version-badge">v1.0 Pro</span>
+            </div>
+            
+            <div class="active-params">
+                <div class="param-group">
+                    <label>📍 City:</label>
+                    <input type="text" id="targetCity" class="param-input" placeholder="e.g. Surat, Rajkot, Mumbai..." autocomplete="off" oninput="handleParamChange()" onchange="handleParamChange()">
+                </div>
+                <div class="param-group">
+                    <label>🏷️ Category:</label>
+                    <input type="text" id="targetCategory" class="param-input" placeholder="e.g. Dentist, Real Estate, Gym..." autocomplete="off" oninput="handleParamChange()" onchange="handleParamChange()">
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-right">
+            <!-- Safety Switch -->
+            <div class="safety-toggle-box">
+                <span class="safety-label">Outreach Mode:</span>
+                <button id="dryRunToggle" class="mode-pill dry-run-active" onclick="toggleDryRun()">
+                    🛡️ DRY RUN ACTIVE
+                </button>
+            </div>
+
+            <!-- 1-Click Master Action -->
+            <button class="btn btn-gradient" id="btnRunFullPipeline" onclick="runStage('all')">
+                <span class="btn-icon">🚀</span> Run Full Pipeline
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Application Container -->
+    <div class="dashboard-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-section-title">Navigation</div>
+            <nav class="nav-menu">
+                <button class="nav-item active" onclick="switchTab('overview')">
+                    <span class="nav-icon">📊</span> Pipeline Overview
+                </button>
+                <button class="nav-item" onclick="switchTab('approval')">
+                    <span class="nav-icon">⚖️</span> Human Approval Queue
+                    <span class="badge-count" id="pendingApprovalBadge">0</span>
+                </button>
+                <button class="nav-item" onclick="switchTab('leads')">
+                    <span class="nav-icon">👥</span> Lead Explorer Table
+                </button>
+                <button class="nav-item" onclick="switchTab('logs')">
+                    <span class="nav-icon">📜</span> Live Console Logs
+                </button>
+            </nav>
+
+            <div class="sidebar-section-title" style="margin-top: 32px;">Quick 1-Click Actions</div>
+            <div class="sidebar-actions">
+                <button class="action-btn" onclick="runStage('discover')">
+                    <span>🔍</span> Discover Leads
+                </button>
+                <button class="action-btn" onclick="runStage('verify')">
+                    <span>🌐</span> Verify Websites
+                </button>
+                <button class="action-btn" onclick="runStage('score')">
+                    <span>⭐</span> Score & Qualify
+                </button>
+                <button class="action-btn" onclick="runStage('personalize')">
+                    <span>✨</span> AI Personalize
+                </button>
+                <button class="action-btn" onclick="runStage('demo')">
+                    <span>🖥️</span> Generate Demos
+                </button>
+                <button class="action-btn" onclick="runStage('outreach')">
+                    <span>📨</span> Dispatch Outreach
+                </button>
+                <button class="action-btn" onclick="runStage('followup')">
+                    <span>🔄</span> Run Follow-ups
+                </button>
+                <button class="action-btn" onclick="runStage('sync')">
+                    <span>📑</span> Google Sheets Sync
+                </button>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="status-indicator">
+                    <span class="pulse-dot"></span> System Live • SQLite DB
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Toast Notification Container -->
+            <div id="toastContainer" class="toast-container"></div>
+
+            <!-- Tab 1: Overview -->
+            <section id="tab-overview" class="tab-pane active">
+                <div class="section-header">
+                    <div>
+                        <h2>Pipeline Overview & Metrics</h2>
+                        <p class="subtitle">Real-time status of your B2B web design prospect pipeline in <span id="displayCity">Vadodara</span></p>
+                    </div>
+                    <button class="btn btn-outline btn-sm" onclick="refreshAllData()">
+                        🔄 Refresh Data
+                    </button>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card" style="--accent-color: #3b82f6;">
+                        <div class="stat-header">
+                            <span class="stat-title">Discovered</span>
+                            <span class="stat-icon">📍</span>
+                        </div>
+                        <div class="stat-value" id="statDiscovered">0</div>
+                        <div class="stat-footer">Google Maps & SerpAPI</div>
+                    </div>
+
+                    <div class="stat-card" style="--accent-color: #f97316;">
+                        <div class="stat-header">
+                            <span class="stat-title">🔥 HOT Leads</span>
+                            <span class="stat-icon">🔥</span>
+                        </div>
+                        <div class="stat-value" id="statHot">0</div>
+                        <div class="stat-footer">Score ≥ 70 (No Site / Broken)</div>
+                    </div>
+
+                    <div class="stat-card" style="--accent-color: #eab308;">
+                        <div class="stat-header">
+                            <span class="stat-title">⚡ WARM Leads</span>
+                            <span class="stat-icon">⚡</span>
+                        </div>
+                        <div class="stat-value" id="statWarm">0</div>
+                        <div class="stat-footer">Score 45–69</div>
+                    </div>
+
+                    <div class="stat-card" style="--accent-color: #06b6d4;">
+                        <div class="stat-header">
+                            <span class="stat-title">Demos Ready</span>
+                            <span class="stat-icon">🖥️</span>
+                        </div>
+                        <div class="stat-value" id="statDemoReady">0</div>
+                        <div class="stat-footer">Live Landing Page Previews</div>
+                    </div>
+
+                    <div class="stat-card" style="--accent-color: #ec4899;">
+                        <div class="stat-header">
+                            <span class="stat-title">Pending Approval</span>
+                            <span class="stat-icon">⏳</span>
+                        </div>
+                        <div class="stat-value" id="statPendingApproval">0</div>
+                        <div class="stat-footer">Awaiting Human Review</div>
+                    </div>
+
+                    <div class="stat-card" style="--accent-color: #10b981;">
+                        <div class="stat-header">
+                            <span class="stat-title">Outreach Dispatched</span>
+                            <span class="stat-icon">📬</span>
+                        </div>
+                        <div class="stat-value" id="statSent">0</div>
+                        <div class="stat-footer">Delivered / Dry Run Sent</div>
+                    </div>
+                </div>
+
+                <!-- Pipeline Stages Progress Matrix -->
+                <div class="card mt-6">
+                    <div class="card-header">
+                        <h3>⚡ Interactive Pipeline Control Matrix</h3>
+                        <span class="badge badge-info">Click any stage to execute instantly</span>
+                    </div>
+                    <div class="pipeline-flow">
+                        <div class="stage-step" onclick="runStage('discover')">
+                            <div class="step-badge">1</div>
+                            <div class="step-title">Discovery</div>
+                            <div class="step-desc">SerpAPI Maps</div>
+                            <button class="step-btn">Run Discovery</button>
+                        </div>
+                        <div class="step-arrow">➔</div>
+
+                        <div class="stage-step" onclick="runStage('verify')">
+                            <div class="step-badge">2</div>
+                            <div class="step-title">Verification</div>
+                            <div class="step-desc">HTTP Site Check</div>
+                            <button class="step-btn">Check Sites</button>
+                        </div>
+                        <div class="step-arrow">➔</div>
+
+                        <div class="stage-step" onclick="runStage('score')">
+                            <div class="step-badge">3</div>
+                            <div class="step-title">Scoring</div>
+                            <div class="step-desc">HOT/WARM/LOW</div>
+                            <button class="step-btn">Score Leads</button>
+                        </div>
+                        <div class="step-arrow">➔</div>
+
+                        <div class="stage-step" onclick="runStage('personalize')">
+                            <div class="step-badge">4</div>
+                            <div class="step-title">AI Copy</div>
+                            <div class="step-desc">Claude Sonnet</div>
+                            <button class="step-btn">Write Copy</button>
+                        </div>
+                        <div class="step-arrow">➔</div>
+
+                        <div class="stage-step" onclick="runStage('demo')">
+                            <div class="step-badge">5</div>
+                            <div class="step-title">Demo Pages</div>
+                            <div class="step-desc">Preview Sites</div>
+                            <button class="step-btn">Build Demos</button>
+                        </div>
+                        <div class="step-arrow">➔</div>
+
+                        <div class="stage-step" onclick="switchTab('approval')">
+                            <div class="step-badge">6</div>
+                            <div class="step-title">Approval</div>
+                            <div class="step-desc">Human Gate</div>
+                            <button class="step-btn highlight">Review Queue</button>
+                        </div>
+                        <div class="step-arrow">➔</div>
+
+                        <div class="stage-step" onclick="runStage('outreach')">
+                            <div class="step-badge">7</div>
+                            <div class="step-title">Outreach</div>
+                            <div class="step-desc">Email & WhatsApp</div>
+                            <button class="step-btn">Send Outreach</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity & High Priority Prospects Preview -->
+                <div class="grid-2 mt-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>🔥 Top Hot Prospects Ready for Action</h3>
+                            <button class="btn btn-sm btn-ghost" onclick="switchTab('leads')">View All →</button>
+                        </div>
+                        <div id="hotProspectsList" class="compact-lead-list">
+                            <div class="empty-state">Loading prospects...</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>📜 Live Activity Stream</h3>
+                            <button class="btn btn-sm btn-ghost" onclick="switchTab('logs')">Full Console →</button>
+                        </div>
+                        <div id="recentLogsStream" class="log-stream-box">
+                            <div class="log-line">Initializing LeadHunter AI Dashboard...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 2: Human Approval Queue -->
+            <section id="tab-approval" class="tab-pane">
+                <div class="section-header">
+                    <div>
+                        <h2>⚖️ Human Approval Gateway</h2>
+                        <p class="subtitle">Review AI-generated cold copy, demo sites, and business context before dispatching</p>
+                    </div>
+                    <div class="flex-actions">
+                        <button class="btn btn-success" onclick="approveAllPending()">
+                            ✅ Approve All Pending
+                        </button>
+                        <button class="btn btn-outline" onclick="loadApprovalQueue()">
+                            🔄 Refresh Queue
+                        </button>
+                    </div>
+                </div>
+
+                <div id="approvalQueueContainer" class="approval-cards-grid">
+                    <div class="empty-state">No leads currently pending approval.</div>
+                </div>
+            </section>
+
+            <!-- Tab 3: Lead Explorer Table -->
+            <section id="tab-leads" class="tab-pane">
+                <div class="section-header">
+                    <div>
+                        <h2>👥 Lead Explorer & Database</h2>
+                        <p class="subtitle">Full repository of discovered, scored, and contacted local businesses</p>
+                    </div>
+                    <button class="btn btn-outline btn-sm" onclick="exportToCsv()">
+                        📥 Export to CSV
+                    </button>
+                </div>
+
+                <!-- Filter & Search Toolbar -->
+                <div class="toolbar-card">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="leadSearchInput" placeholder="Search by business name, phone, address..." oninput="filterLeadsTable()">
+                    </div>
+
+                    <div class="filters-row">
+                        <select id="filterTier" onchange="filterLeadsTable()" class="select-input">
+                            <option value="">All Tiers</option>
+                            <option value="HOT">🔥 HOT Tier</option>
+                            <option value="WARM">⚡ WARM Tier</option>
+                            <option value="LOW">❄️ LOW Tier</option>
+                        </select>
+
+                        <select id="filterStatus" onchange="filterLeadsTable()" class="select-input">
+                            <option value="">All Statuses</option>
+                            <option value="DISCOVERED">DISCOVERED</option>
+                            <option value="VERIFIED">VERIFIED</option>
+                            <option value="QUALIFIED">QUALIFIED</option>
+                            <option value="PERSONALIZED">PERSONALIZED</option>
+                            <option value="DEMO_READY">DEMO_READY</option>
+                            <option value="PENDING_APPROVAL">PENDING_APPROVAL</option>
+                            <option value="APPROVED">APPROVED</option>
+                            <option value="DRY_RUN_SENT">DRY_RUN_SENT</option>
+                            <option value="SENT">SENT</option>
+                            <option value="COLD">COLD</option>
+                            <option value="REJECTED">REJECTED</option>
+                        </select>
+
+                        <select id="filterWebsiteStatus" onchange="filterLeadsTable()" class="select-input">
+                            <option value="">All Website Statuses</option>
+                            <option value="NO_WEBSITE">NO_WEBSITE</option>
+                            <option value="BROKEN_WEBSITE">BROKEN_WEBSITE</option>
+                            <option value="SOCIAL_ONLY">SOCIAL_ONLY</option>
+                            <option value="DIRECTORY_ONLY">DIRECTORY_ONLY</option>
+                            <option value="VALID_WEBSITE">VALID_WEBSITE</option>
+                            <option value="UNKNOWN">UNKNOWN</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Table Container -->
+                <div class="table-container">
+                    <table class="leads-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Business Name</th>
+                                <th>Category</th>
+                                <th>City</th>
+                                <th>Website Status</th>
+                                <th>Score & Tier</th>
+                                <th>Lifecycle Status</th>
+                                <th>Demo Page</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leadsTableBody">
+                            <tr>
+                                <td colspan="9" class="text-center">Loading database leads...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Tab 4: Live Logs Console -->
+            <section id="tab-logs" class="tab-pane">
+                <div class="section-header">
+                    <div>
+                        <h2>📜 Live Execution Console</h2>
+                        <p class="subtitle">Real-time system telemetry and stage execution output</p>
+                    </div>
+                    <div class="flex-actions">
+                        <button class="btn btn-outline btn-sm" onclick="clearConsoleView()">Clear View</button>
+                        <button class="btn btn-outline btn-sm" onclick="fetchLiveLogs()">🔄 Refresh Logs</button>
+                    </div>
+                </div>
+
+                <div class="console-box" id="fullConsoleLogs">
+                    <pre class="console-text">[System] Log console initialized.</pre>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal 1: Lead Detail Inspector -->
+    <div id="leadModal" class="modal-backdrop" onclick="closeModalOnBackdrop(event, 'leadModal')">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalLeadName">Lead Details</h3>
+                <button class="close-modal-btn" onclick="closeModal('leadModal')">✕</button>
+            </div>
+            <div class="modal-body" id="modalLeadBody">
+                Loading...
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Live Demo Landing Page Preview -->
+    <div id="demoModal" class="modal-backdrop" onclick="closeModalOnBackdrop(event, 'demoModal')">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <div class="flex items-center gap-2">
+                    <span class="badge badge-success">Live Website Preview</span>
+                    <span id="modalDemoTitle" style="font-weight: 700;">Demo Website</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a id="modalDemoExternalLink" href="#" target="_blank" class="btn btn-outline btn-sm">🔗 Open in New Tab</a>
+                    <button class="close-modal-btn" onclick="closeModal('demoModal')">✕</button>
+                </div>
+            </div>
+            <div class="modal-body p-0">
+                <iframe id="demoPreviewFrame" src="" class="demo-iframe"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
